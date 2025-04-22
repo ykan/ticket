@@ -147,7 +147,10 @@ function czEngine() {
             return answers.isBreaking && !answers.body
           },
           validate: function (breakingBody, answers) {
-            return breakingBody.trim().length > 0 || 'Body is required for BREAKING CHANGE'
+            return (
+              breakingBody.trim().length > 0 ||
+              'Body is required for BREAKING CHANGE'
+            )
           },
         },
         {
@@ -197,7 +200,9 @@ function czEngine() {
 
         // Apply breaking change prefix, removing it if already present
         let breaking = answers.breaking ? answers.breaking.trim() : ''
-        breaking = breaking ? 'BREAKING CHANGE: ' + breaking.replace(/^BREAKING CHANGE: /, '') : ''
+        breaking = breaking
+          ? 'BREAKING CHANGE: ' + breaking.replace(/^BREAKING CHANGE: /, '')
+          : ''
         breaking = breaking ? breaking : false
 
         const issues = answers.issues ? answers.issues : false
