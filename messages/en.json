@@ -1,0 +1,8 @@
+{
+  "ticket": {
+    "list": {
+      "title": "Ticket List",
+      "empty": "No tickets found"
+    }
+  }
+}

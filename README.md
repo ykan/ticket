@@ -20,4 +20,3 @@
 - 部署：[Vercel](https://vercel.com/)
 - 用户&权限：[Clerk](https://dashboard.clerk.com/)
 - 数据库：[Supabase](https://supabase.com/)
-

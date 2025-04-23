@@ -9,6 +9,7 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "commit": "git add . && cz",
+    "lint-staged": "lint-staged",
     "prepare": "husky"
   },
   "config": {
@@ -16,10 +17,20 @@
       "path": "./scripts/cz.js"
     }
   },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
+  },
   "dependencies": {
     "@clerk/nextjs": "^6.17.0",
     "@supabase/supabase-js": "^2.49.4",
     "next": "15.3.1",
+    "next-intl": "^4.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -34,8 +45,8 @@
     "eslint-config-next": "15.3.1",
     "eslint-config-prettier": "^10.1.2",
     "husky": "^9.1.7",
+    "lint-staged": "^15.5.1",
     "prettier": "^3.5.3",
-    "supabase": "^2.22.4",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
