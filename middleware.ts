@@ -7,7 +7,7 @@ const intlMiddleware = createIntlMiddleware({
   defaultLocale: 'zh',
 })
 
-const isPageRoute = createRouteMatcher(['/(zh|en)/(.*)/ticket(.*)'])
+const isPageRoute = createRouteMatcher(['/(zh|en)/w/(.*)'])
 const isRootRoute = createRouteMatcher(['/zh', '/en'])
 const isAPIRoute = createRouteMatcher(['/api(.*)', '/trpc(.*)'])
 export default clerkMiddleware(async (auth, req) => {
@@ -27,7 +27,7 @@ export default clerkMiddleware(async (auth, req) => {
     if (authData.userId) {
       return NextResponse.redirect(
         new URL(
-          `${req.nextUrl.pathname}/${authData.orgSlug}/ticket/list`,
+          `${req.nextUrl.pathname}/w/${authData.orgSlug}/ticket/list`,
           req.url
         )
       )

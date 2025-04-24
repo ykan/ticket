@@ -9,7 +9,7 @@ function createNavigation() {
     const { locale, workspace } = useNextParams()
     const { href, ...other } = props
     return (
-      <NextLink href={`/${locale}/${workspace}${href}`} {...other}>
+      <NextLink href={`/${locale}/w/${workspace}${href}`} {...other}>
         {props.children}
       </NextLink>
     )
@@ -17,7 +17,7 @@ function createNavigation() {
   const usePathname: () => string = () => {
     const { locale, workspace } = useNextParams()
     const pathname = useNextPathname()
-    return pathname.replace(`/${locale}/${workspace}`, '')
+    return pathname.replace(`/${locale}/w/${workspace}`, '')
   }
   return {
     Link,

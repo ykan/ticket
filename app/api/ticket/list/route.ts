@@ -8,7 +8,7 @@ export async function GET() {
   try {
     // 获取工单列表
     const tickets = await supabase.from('ticket').select()
-    console.log('获取工单列表成功:', tickets) // 添加这一行日志，以便在控制台中查看 t
+    // console.log('获取工单列表成功:', tickets) // 添加这一行日志，以便在控制台中查看 t
 
     return NextResponse.json(tickets)
   } catch (error) {
