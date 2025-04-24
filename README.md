@@ -12,6 +12,15 @@
 ~ pnpm lint   # 检查代码
 ```
 
+## 开发工具
+
+```bash
+~ pnpm i -g vercel
+~ vercel login
+~ vercel link
+~ vercel env pull # 拉取环境变量
+```
+
 # 常用资源
 
 - [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts)

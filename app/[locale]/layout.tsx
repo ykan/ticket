@@ -1,26 +1,18 @@
 import type { Metadata } from 'next'
 import { ClerkProvider } from '@clerk/nextjs'
-import { Geist, Geist_Mono } from 'next/font/google'
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
+
 import { routing } from '@/i18n/routing'
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-})
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-})
+import { fonts } from '@/lib/fonts'
+import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
   title: 'Ticket System',
   description: 'Ticket System',
 }
 
-export default async function RootLayout({
+export default async function LocaleLayout({
   children,
   params,
 }: Readonly<{
@@ -36,11 +28,7 @@ export default async function RootLayout({
     <ClerkProvider>
       <NextIntlClientProvider>
         <html lang={locale}>
-          <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-          >
-            {children}
-          </body>
+          <body className={cn(fonts, 'antialiased')}>{children}</body>
         </html>
       </NextIntlClientProvider>
     </ClerkProvider>

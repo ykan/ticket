@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { UserButton } from '@clerk/nextjs'
 import { useTranslations } from 'next-intl'
 
 export const metadata: Metadata = {
@@ -12,9 +11,6 @@ export default function TicketList() {
   return (
     <div>
       <div>{t('title')}</div>
-      <div>
-        <UserButton />
-      </div>
     </div>
   )
 }
