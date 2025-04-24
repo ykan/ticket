@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 }
 
 export default function TicketList() {
-  const t = useTranslations('ticket.list')
+  const t = useTranslations('farm.list')
   return (
     <div>
       <div>{t('title')}</div>

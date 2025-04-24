@@ -7,22 +7,33 @@ const intlMiddleware = createIntlMiddleware({
   defaultLocale: 'zh',
 })
 
-const isPageRoute = createRouteMatcher(['/(zh|en)/ticket(.*)'])
+const isPageRoute = createRouteMatcher(['/(zh|en)/(.*)/ticket(.*)'])
 const isRootRoute = createRouteMatcher(['/zh', '/en'])
+const isAPIRoute = createRouteMatcher(['/api(.*)', '/trpc(.*)'])
 export default clerkMiddleware(async (auth, req) => {
+  const authData = await auth()
+  if (isAPIRoute(req)) {
+    if (!authData.userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return NextResponse.next()
+  }
+  // console.log('authData', authData)
   if (isPageRoute(req)) {
-    const { userId } = await auth()
-    if (!userId) {
+    if (!authData.userId) {
       return NextResponse.redirect(new URL('/zh', req.url))
     }
   } else if (isRootRoute(req)) {
-    const { userId } = await auth()
-    if (userId) {
+    if (authData.userId) {
       return NextResponse.redirect(
-        new URL(`${req.nextUrl.pathname}/ticket/list`, req.url)
+        new URL(
+          `${req.nextUrl.pathname}/${authData.orgSlug}/ticket/list`,
+          req.url
+        )
       )
     }
   }
+
   return intlMiddleware(req)
 })
 

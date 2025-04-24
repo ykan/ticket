@@ -4,5 +4,11 @@
       "title": "Ticket List",
       "empty": "No tickets found"
     }
+  },
+  "farm": {
+    "list": {
+      "title": "Farm List",
+      "empty": "No farms found"
+    }
   }
 }

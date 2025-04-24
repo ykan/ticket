@@ -1,5 +1,5 @@
 import { UserButton } from '@clerk/nextjs'
-import { Ticket, Settings, Users } from 'lucide-react'
+import { Ticket } from 'lucide-react'
 
 import { MenuGroup, MenuItem } from '@/components/menu'
 
@@ -24,19 +24,10 @@ export default function TicketLayout({
             label="所有工单"
             href="/ticket/list"
           />
-        </MenuGroup>
-
-        {/* 系统管理 */}
-        <MenuGroup title="系统管理">
           <MenuItem
-            icon={<Users className="w-4 h-4" />}
-            label="用户管理"
-            href="/ticket/users"
-          />
-          <MenuItem
-            icon={<Settings className="w-4 h-4" />}
-            label="系统设置"
-            href="/ticket/settings"
+            icon={<Ticket className="w-4 h-4" />}
+            label="所有矿场"
+            href="/farm/list"
           />
         </MenuGroup>
       </aside>

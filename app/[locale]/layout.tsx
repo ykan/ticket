@@ -7,6 +7,8 @@ import { routing } from '@/i18n/routing'
 import { fonts } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
 
+import { Providers } from './providers'
+
 export const metadata: Metadata = {
   title: 'Ticket System',
   description: 'Ticket System',
@@ -27,9 +29,11 @@ export default async function LocaleLayout({
   return (
     <ClerkProvider>
       <NextIntlClientProvider>
-        <html lang={locale}>
-          <body className={cn(fonts, 'antialiased')}>{children}</body>
-        </html>
+        <Providers>
+          <html lang={locale}>
+            <body className={cn(fonts, 'antialiased')}>{children}</body>
+          </html>
+        </Providers>
       </NextIntlClientProvider>
     </ClerkProvider>
   )

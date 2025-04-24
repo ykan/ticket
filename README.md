@@ -12,13 +12,21 @@
 ~ pnpm lint   # 检查代码
 ```
 
-## 开发工具
+## 拉取环境变量
 
 ```bash
 ~ pnpm i -g vercel
 ~ vercel login
 ~ vercel link
-~ vercel env pull # 拉取环境变量
+~ vercel env pull
+```
+
+## 同步数据库类型
+
+```bash
+~ brew install supabase/tap/supabase # pnpm 安装的有问题
+~ supabase login
+~ supabase gen types typescript --project-id "$PROJECT_ID" --schema public > lib/supabase.types.ts
 ```
 
 # 常用资源
