@@ -1,21 +1,39 @@
+'use client'
+import { Languages } from 'lucide-react'
 import { useLocale } from 'next-intl'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
-export default function LanguageSwitcher() {
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
+
+export default function LangSwitcher() {
   const locale = useLocale()
   const router = useRouter()
+  const pathname = usePathname()
 
-  const toggleLocale = () => {
-    const newLocale = locale === 'en' ? 'zh' : 'en'
-    router.push(`/${newLocale}`)
+  const toggleLocale = (changeLocale: string) => {
+    router.push(pathname.replace(locale, changeLocale))
   }
 
   return (
-    <button
-      onClick={toggleLocale}
-      className="px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
-    >
-      {locale === 'en' ? '中文' : 'English'}
-    </button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm">
+          <Languages />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-20">
+        <DropdownMenuRadioGroup value={locale} onValueChange={toggleLocale}>
+          <DropdownMenuRadioItem value="en">English</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="zh">中文</DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { ClerkProvider } from '@clerk/nextjs'
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
+import { ThemeProvider } from 'next-themes'
 
 import { routing } from '@/i18n/routing'
 import { fonts } from '@/lib/fonts'
@@ -30,9 +31,11 @@ export default async function LocaleLayout({
     <ClerkProvider>
       <NextIntlClientProvider>
         <Providers>
-          <html lang={locale}>
-            <body className={cn(fonts, 'antialiased')}>{children}</body>
-          </html>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <html lang={locale}>
+              <body className={cn(fonts, 'antialiased')}>{children}</body>
+            </html>
+          </ThemeProvider>
         </Providers>
       </NextIntlClientProvider>
     </ClerkProvider>
