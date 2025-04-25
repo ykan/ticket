@@ -32,7 +32,7 @@ export default async function LocaleLayout({
       <NextIntlClientProvider>
         <Providers>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <html lang={locale}>
+            <html lang={locale} suppressHydrationWarning>
               <body className={cn(fonts, 'antialiased')}>{children}</body>
             </html>
           </ThemeProvider>

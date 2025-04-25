@@ -3,6 +3,10 @@
     "list": {
       "title": "Ticket List",
       "empty": "No tickets found"
+    },
+    "detail": {
+      "title": "Ticket Detail",
+      "status": "Ticket Status"
     }
   },
   "farm": {

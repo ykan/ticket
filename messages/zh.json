@@ -3,6 +3,10 @@
     "list": {
       "title": "工单列表",
       "empty": "暂无工单"
+    },
+    "detail": {
+      "title": "工单详情",
+      "status": "工单状态"
     }
   },
   "farm": {
