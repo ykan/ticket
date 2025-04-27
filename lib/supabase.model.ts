@@ -45,6 +45,25 @@ interface Ticket {
   updatedAt: Date // 更新时间
 }
 
+enum OperateLogType {
+  FarmSnapshot, // 矿场快照
+  MinersSnapshot, // 矿机快照
+  Remark, // 备注
+  LevelChange, // 工单等级变更
+  AssigneeChange, // 处理人变更
+  StatusChange, // 工单状态变更
+}
+
+interface OperateLog {
+  id: number // 唯一标识符
+  ticketId: number // 关联工单 ID
+  type: OperateLogType // 操作类型
+  data: any // 操作数据
+  // 元数据
+  createdAt: Date // 创建时间
+  updatedAt: Date // 更新时间
+}
+
 interface Farm {
   id: number // 场地 ID
   workspaceId: string // 所属工作空间 ID

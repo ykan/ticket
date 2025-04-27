@@ -1,14 +1,40 @@
 import { NextResponse } from 'next/server'
-
+import { auth } from '@clerk/nextjs/server'
 import { supabase } from '@/lib/supabase'
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    // 获取工单列表
-    const tickets = await supabase.from('ticket').select()
-    // console.log('获取工单列表成功:', tickets) // 添加这一行日志，以便在控制台中查看 t
+    const user = await auth()
+    const { searchParams } = new URL(request.url)
+    const level = searchParams.get('level')
+    const status = searchParams.get('status')
 
-    return NextResponse.json(tickets)
+    // 构建查询
+    let query = supabase
+      .from('ticket')
+      .select()
+      .eq('workspace_id', user.orgId)
+      .limit(100)
+
+    // 添加筛选条件
+    if (level) {
+      query = query.eq('level', level)
+    }
+    if (status) {
+      query = query.eq('status', status)
+    }
+
+    // 执行查询
+    const { data, error } = await query
+
+    if (error) {
+      console.error('获取工单列表失败:', error)
+      return NextResponse.json({ error: '获取工单列表失败' }, { status: 500 })
+    }
+
+    return NextResponse.json({
+      data,
+    })
   } catch (error) {
     console.error('获取工单列表失败:', error)
     return NextResponse.json({ error: '获取工单列表失败' }, { status: 500 })

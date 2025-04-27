@@ -107,6 +107,41 @@ export type Database = {
           },
         ]
       }
+      operate_log: {
+        Row: {
+          created_at: string | null
+          data: Json
+          id: number
+          ticket_id: number
+          type: Database['public']['Enums']['operate_log_type']
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          data: Json
+          id?: number
+          ticket_id: number
+          type: Database['public']['Enums']['operate_log_type']
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          data?: Json
+          id?: number
+          ticket_id?: number
+          type?: Database['public']['Enums']['operate_log_type']
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'fk_ticket'
+            columns: ['ticket_id']
+            isOneToOne: false
+            referencedRelation: 'ticket'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       settings: {
         Row: {
           created_at: string
@@ -145,7 +180,7 @@ export type Database = {
           miner_ids: string[]
           no: number | null
           origin_level: Database['public']['Enums']['ticket_level']
-          reporter_id: string
+          reporter_id: string | null
           status: Database['public']['Enums']['ticket_status']
           title: string
           updated_at: string
@@ -161,7 +196,7 @@ export type Database = {
           miner_ids?: string[]
           no?: number | null
           origin_level: Database['public']['Enums']['ticket_level']
-          reporter_id: string
+          reporter_id?: string | null
           status: Database['public']['Enums']['ticket_status']
           title: string
           updated_at?: string
@@ -177,7 +212,7 @@ export type Database = {
           miner_ids?: string[]
           no?: number | null
           origin_level?: Database['public']['Enums']['ticket_level']
-          reporter_id?: string
+          reporter_id?: string | null
           status?: Database['public']['Enums']['ticket_status']
           title?: string
           updated_at?: string
@@ -202,6 +237,13 @@ export type Database = {
     }
     Enums: {
       miner_status: 'Disabled' | 'Enabled' | 'Maintenance' | 'Error' | 'Unknown'
+      operate_log_type:
+        | 'FarmSnapshot'
+        | 'MinersSnapshot'
+        | 'Remark'
+        | 'LevelChange'
+        | 'AssigneeChange'
+        | 'StatusChange'
       ticket_level: 'P0' | 'P1' | 'P2' | 'P3' | 'P4'
       ticket_status: 'Todo' | 'Doing' | 'Canceled' | 'Done'
     }
@@ -320,6 +362,14 @@ export const Constants = {
   public: {
     Enums: {
       miner_status: ['Disabled', 'Enabled', 'Maintenance', 'Error', 'Unknown'],
+      operate_log_type: [
+        'FarmSnapshot',
+        'MinersSnapshot',
+        'Remark',
+        'LevelChange',
+        'AssigneeChange',
+        'StatusChange',
+      ],
       ticket_level: ['P0', 'P1', 'P2', 'P3', 'P4'],
       ticket_status: ['Todo', 'Doing', 'Canceled', 'Done'],
     },

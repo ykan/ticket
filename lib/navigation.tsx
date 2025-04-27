@@ -1,7 +1,4 @@
-import {
-  useParams as useNextParams,
-  usePathname as useNextPathname,
-} from 'next/navigation'
+import { useParams as useNextParams } from 'next/navigation'
 import NextLink from 'next/link'
 
 function createNavigation() {
@@ -14,14 +11,13 @@ function createNavigation() {
       </NextLink>
     )
   }
-  const usePathname: () => string = () => {
+  const useRootPath: () => string = () => {
     const { locale, workspace } = useNextParams()
-    const pathname = useNextPathname()
-    return pathname.replace(`/${locale}/w/${workspace}`, '')
+    return `/${locale}/w/${workspace}`
   }
   return {
     Link,
-    usePathname,
+    useRootPath,
   }
 }
-export const { Link, usePathname } = createNavigation()
+export const { Link, useRootPath } = createNavigation()

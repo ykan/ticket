@@ -1,11 +1,10 @@
 'use client'
 import { UserButton, OrganizationSwitcher } from '@clerk/nextjs'
-import { Languages, Moon, Sun, Ticket } from 'lucide-react'
+import { Languages, Moon, Sun, Gauge } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useLocale } from 'next-intl'
 import { usePathname, useRouter } from 'next/navigation'
 
-import { MenuGroup, MenuItem } from '@/components/menu'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -14,6 +13,8 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Link } from '@/lib/navigation'
+import { cn } from '@/lib/utils'
 
 function ThemeSwitcher() {
   const { theme, setTheme } = useTheme()
@@ -55,6 +56,25 @@ function LangSwitcher() {
   )
 }
 
+function DashboardItem() {
+  const pathname = usePathname()
+  const isActive = pathname.includes('/dashboard')
+
+  return (
+    <Link
+      href="/dashboard"
+      className={cn(
+        'flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors',
+        'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+        isActive && 'bg-sidebar-accent text-sidebar-accent-foreground'
+      )}
+    >
+      <Gauge className="w-5 h-5" />
+      <span>工作台</span>
+    </Link>
+  )
+}
+
 export function Sidebar() {
   return (
     <aside className="p-4 flex flex-col">
@@ -68,18 +88,9 @@ export function Sidebar() {
 
       {/* 工单管理 */}
       <div className="flex-1">
-        <MenuGroup title="工单管理">
-          <MenuItem
-            icon={<Ticket className="w-4 h-4" />}
-            label="所有工单"
-            href="/ticket/list"
-          />
-          <MenuItem
-            icon={<Ticket className="w-4 h-4" />}
-            label="所有矿场"
-            href="/farm/list"
-          />
-        </MenuGroup>
+        <div className="py-4">
+          <DashboardItem />
+        </div>
       </div>
 
       <div className="mt-auto pt-3 border-t border-sidebar-border flex justify-between">
