@@ -64,22 +64,22 @@ interface OperateLog {
   updatedAt: Date // 更新时间
 }
 
+enum FarmMinerStatus {
+  Online, // 在线
+  Offline, // 离线
+  Error, // 故障
+  Partial, // 部分机器故障
+}
+
 interface Farm {
   id: number // 场地 ID
   workspaceId: string // 所属工作空间 ID
   name: string // 场地名称
+  status: FarmMinerStatus // 场地状态
   location: string // 位置信息
   eletricityFee: number // 电力信息
   createdAt: Date // 创建时间
   updatedAt: Date // 更新时间
-}
-
-enum MinerStatus {
-  Disabled,
-  Enabled,
-  Maintenance,
-  Error,
-  Unknown,
 }
 
 interface Miner {
@@ -96,7 +96,7 @@ interface Miner {
   serialNumber?: string // 序列号
 
   // 状态信息
-  status: MinerStatus // 矿机状态
+  status: FarmMinerStatus // 矿机状态
   isMining: boolean // 是否挖矿中
   lastSeen: Date // 最后在线时间
 

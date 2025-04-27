@@ -13,6 +13,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { FarmList } from '@/components/farm-list'
 import { Link } from '@/lib/navigation'
 import { cn } from '@/lib/utils'
 
@@ -90,6 +91,9 @@ export function Sidebar() {
       <div className="flex-1">
         <div className="py-4">
           <DashboardItem />
+        </div>
+        <div>
+          <FarmList />
         </div>
       </div>
 

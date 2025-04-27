@@ -2,10 +2,10 @@
 import { useTranslations } from 'next-intl'
 import { useQuery } from '@tanstack/react-query'
 import { request } from '@/lib/request'
-import { Button } from '@/components/ui/button'
 import { Tables } from '@/lib/supabase.types'
 import { PageView, PageHead, PageBody } from '@/components/page-view'
 import { TicketList } from '@/components/ticket-list'
+import { TicketDialog } from '@/components/ticket-dialog'
 
 export default function Dashboard() {
   const t = useTranslations('ticket.list')
@@ -23,14 +23,6 @@ export default function Dashboard() {
       }
     },
   })
-
-  const handleCreate = () => {
-    request.post('/ticket', {
-      title: '测试 P2 工单',
-      description: `## 测试工单\n\`\`\`js\nconsole.log('test')\n\`\`\``,
-      level: 'P2',
-    })
-  }
 
   const renderP0List = () => {
     if (!data?.p0List?.length) {
@@ -71,9 +63,7 @@ export default function Dashboard() {
       <PageHead>
         <div className="text-lg font-semibold flex-1">{t('title')}</div>
         <div>
-          <Button size="sm" onClick={handleCreate}>
-            创建工单
-          </Button>
+          <TicketDialog />
         </div>
       </PageHead>
       <PageBody>

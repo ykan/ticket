@@ -12,28 +12,31 @@ export type Database = {
       farm: {
         Row: {
           created_at: string
-          eletricity_fee: number
+          eletricity_fee: number | null
           id: number
           location: string
           name: string
+          status: Database['public']['Enums']['farm_miner_status']
           updated_at: string
           workspace_id: string
         }
         Insert: {
           created_at?: string
-          eletricity_fee: number
-          id?: never
+          eletricity_fee?: number | null
+          id?: number
           location: string
           name: string
+          status: Database['public']['Enums']['farm_miner_status']
           updated_at?: string
           workspace_id: string
         }
         Update: {
           created_at?: string
-          eletricity_fee?: number
-          id?: never
+          eletricity_fee?: number | null
+          id?: number
           location?: string
           name?: string
+          status?: Database['public']['Enums']['farm_miner_status']
           updated_at?: string
           workspace_id?: string
         }
@@ -55,7 +58,7 @@ export type Database = {
           model: string
           notes: string | null
           serial_number: string | null
-          status: Database['public']['Enums']['miner_status']
+          status: Database['public']['Enums']['farm_miner_status']
           updated_at: string
           workspace_id: string
         }
@@ -74,7 +77,7 @@ export type Database = {
           model: string
           notes?: string | null
           serial_number?: string | null
-          status?: Database['public']['Enums']['miner_status']
+          status?: Database['public']['Enums']['farm_miner_status']
           updated_at?: string
           workspace_id: string
         }
@@ -93,7 +96,7 @@ export type Database = {
           model?: string
           notes?: string | null
           serial_number?: string | null
-          status?: Database['public']['Enums']['miner_status']
+          status?: Database['public']['Enums']['farm_miner_status']
           updated_at?: string
           workspace_id?: string
         }
@@ -236,6 +239,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      farm_miner_status: 'Online' | 'Error' | 'Partial' | 'Offline'
       miner_status: 'Disabled' | 'Enabled' | 'Maintenance' | 'Error' | 'Unknown'
       operate_log_type:
         | 'FarmSnapshot'
@@ -361,6 +365,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      farm_miner_status: ['Online', 'Error', 'Partial', 'Offline'],
       miner_status: ['Disabled', 'Enabled', 'Maintenance', 'Error', 'Unknown'],
       operate_log_type: [
         'FarmSnapshot',
