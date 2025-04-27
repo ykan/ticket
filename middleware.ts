@@ -11,25 +11,29 @@ const isPageRoute = createRouteMatcher(['/(zh|en)/w/(.*)'])
 const isRootRoute = createRouteMatcher(['/zh', '/en'])
 const isAPIRoute = createRouteMatcher(['/api(.*)', '/trpc(.*)'])
 export default clerkMiddleware(async (auth, req) => {
-  const authData = await auth()
+  const user = await auth()
   if (isAPIRoute(req)) {
-    if (!authData.userId) {
+    if (!user.userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    if (!user.orgId) {
+      return NextResponse.json(
+        { error: 'Workspace not exists' },
+        { status: 404 }
+      )
     }
     return NextResponse.next()
   }
-  // console.log('authData', authData)
+  // console.log('user', user)
   if (isPageRoute(req)) {
-    if (!authData.userId) {
+    if (!user.userId) {
       return NextResponse.redirect(new URL('/zh', req.url))
     }
   } else if (isRootRoute(req)) {
-    if (authData.userId) {
+    if (user.userId) {
       return NextResponse.redirect(
-        new URL(
-          `${req.nextUrl.pathname}/w/${authData.orgSlug}/ticket/list`,
-          req.url
-        )
+        new URL(`${req.nextUrl.pathname}/w/${user.orgSlug}/dashboard`, req.url)
       )
     }
   }

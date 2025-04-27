@@ -9,32 +9,189 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      ticket: {
+      farm: {
         Row: {
           created_at: string
-          desc: string | null
-          id: string
-          priority: Database['public']['Enums']['TicketPriority'] | null
-          status: Database['public']['Enums']['TicketStatus'] | null
-          title: string | null
+          eletricity_fee: number
+          id: number
+          location: string
+          name: string
+          updated_at: string
+          workspace_id: string
         }
         Insert: {
           created_at?: string
-          desc?: string | null
-          id?: string
-          priority?: Database['public']['Enums']['TicketPriority'] | null
-          status?: Database['public']['Enums']['TicketStatus'] | null
-          title?: string | null
+          eletricity_fee: number
+          id?: never
+          location: string
+          name: string
+          updated_at?: string
+          workspace_id: string
         }
         Update: {
           created_at?: string
-          desc?: string | null
-          id?: string
-          priority?: Database['public']['Enums']['TicketPriority'] | null
-          status?: Database['public']['Enums']['TicketStatus'] | null
-          title?: string | null
+          eletricity_fee?: number
+          id?: never
+          location?: string
+          name?: string
+          updated_at?: string
+          workspace_id?: string
         }
         Relationships: []
+      }
+      miner: {
+        Row: {
+          created_at: string
+          farm_id: number
+          firmware: Json
+          hostname: string | null
+          id: number
+          ip_address: string
+          is_mining: boolean
+          last_seen: string | null
+          location: string | null
+          mac_address: string | null
+          manufacturer: string
+          model: string
+          notes: string | null
+          serial_number: string | null
+          status: Database['public']['Enums']['miner_status']
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          farm_id: number
+          firmware?: Json
+          hostname?: string | null
+          id?: never
+          ip_address: string
+          is_mining?: boolean
+          last_seen?: string | null
+          location?: string | null
+          mac_address?: string | null
+          manufacturer: string
+          model: string
+          notes?: string | null
+          serial_number?: string | null
+          status?: Database['public']['Enums']['miner_status']
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          farm_id?: number
+          firmware?: Json
+          hostname?: string | null
+          id?: never
+          ip_address?: string
+          is_mining?: boolean
+          last_seen?: string | null
+          location?: string | null
+          mac_address?: string | null
+          manufacturer?: string
+          model?: string
+          notes?: string | null
+          serial_number?: string | null
+          status?: Database['public']['Enums']['miner_status']
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'miner_farm_id_fkey'
+            columns: ['farm_id']
+            isOneToOne: false
+            referencedRelation: 'farm'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      settings: {
+        Row: {
+          created_at: string
+          id: number
+          last_no: number
+          short_name: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          last_no?: number
+          short_name: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          last_no?: number
+          short_name?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      ticket: {
+        Row: {
+          assignee_id: string | null
+          created_at: string
+          description: string
+          farm_id: number | null
+          id: number
+          level: Database['public']['Enums']['ticket_level']
+          miner_ids: string[]
+          no: number | null
+          origin_level: Database['public']['Enums']['ticket_level']
+          reporter_id: string
+          status: Database['public']['Enums']['ticket_status']
+          title: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          assignee_id?: string | null
+          created_at?: string
+          description: string
+          farm_id?: number | null
+          id?: number
+          level: Database['public']['Enums']['ticket_level']
+          miner_ids?: string[]
+          no?: number | null
+          origin_level: Database['public']['Enums']['ticket_level']
+          reporter_id: string
+          status: Database['public']['Enums']['ticket_status']
+          title: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          assignee_id?: string | null
+          created_at?: string
+          description?: string
+          farm_id?: number | null
+          id?: number
+          level?: Database['public']['Enums']['ticket_level']
+          miner_ids?: string[]
+          no?: number | null
+          origin_level?: Database['public']['Enums']['ticket_level']
+          reporter_id?: string
+          status?: Database['public']['Enums']['ticket_status']
+          title?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'ticket_farm_id_fkey'
+            columns: ['farm_id']
+            isOneToOne: false
+            referencedRelation: 'farm'
+            referencedColumns: ['id']
+          },
+        ]
       }
     }
     Views: {
@@ -44,16 +201,9 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      TicketPriority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
-      TicketStatus:
-        | 'TODO'
-        | 'IN_PROGRESS'
-        | 'AT_REPAIR_CENTER'
-        | 'AWAITING_DEPLOYMENT'
-        | 'SCHEDULED_FOR_MAINTENANCE'
-        | 'TESTING'
-        | 'CANCELED'
-        | 'DONE'
+      miner_status: 'Disabled' | 'Enabled' | 'Maintenance' | 'Error' | 'Unknown'
+      ticket_level: 'P0' | 'P1' | 'P2' | 'P3' | 'P4'
+      ticket_status: 'Todo' | 'Doing' | 'Canceled' | 'Done'
     }
     CompositeTypes: {
       [_ in never]: never
@@ -169,17 +319,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      TicketPriority: ['LOW', 'MEDIUM', 'HIGH', 'URGENT'],
-      TicketStatus: [
-        'TODO',
-        'IN_PROGRESS',
-        'AT_REPAIR_CENTER',
-        'AWAITING_DEPLOYMENT',
-        'SCHEDULED_FOR_MAINTENANCE',
-        'TESTING',
-        'CANCELED',
-        'DONE',
-      ],
+      miner_status: ['Disabled', 'Enabled', 'Maintenance', 'Error', 'Unknown'],
+      ticket_level: ['P0', 'P1', 'P2', 'P3', 'P4'],
+      ticket_status: ['Todo', 'Doing', 'Canceled', 'Done'],
     },
   },
 } as const

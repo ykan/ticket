@@ -1,17 +1,20 @@
 import { NextResponse } from 'next/server'
 
 import { supabase } from '@/lib/supabase'
+import { auth } from '@clerk/nextjs/server'
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ no: string }> }
 ) {
+  const user = await auth()
   try {
-    const { id } = await params
+    const { no } = await params
     const { data: ticket, error } = await supabase
       .from('ticket')
       .select()
-      .eq('id', id)
+      .eq('no', no)
+      .eq('workspace_id', user.orgId)
       .single()
 
     if (error) {
