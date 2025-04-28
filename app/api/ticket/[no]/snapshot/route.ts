@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
-import { supabase } from '@/lib/supabase'
-import { getSnapshotData } from '@/lib/ticket'
+import { supabase, getSnapshotData } from '@/lib/supabase'
 
 export async function GET(
   request: Request,

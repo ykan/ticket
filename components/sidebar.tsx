@@ -5,6 +5,7 @@ import { Languages, Moon, Sun, Gauge, ChevronDown } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useLocale } from 'next-intl'
 import { usePathname, useRouter } from 'next/navigation'
+import { dark } from '@clerk/themes'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -117,6 +118,7 @@ function DashboardItem() {
 }
 
 export function Sidebar() {
+  const { theme } = useTheme()
   return (
     <aside className="p-4 flex flex-col">
       {/* workspace */}
@@ -124,6 +126,9 @@ export function Sidebar() {
         <OrganizationSwitcher
           afterCreateOrganizationUrl="/"
           afterSelectOrganizationUrl="/"
+          appearance={{
+            baseTheme: theme === 'dark' ? dark : undefined,
+          }}
         />
       </div>
 
@@ -138,7 +143,12 @@ export function Sidebar() {
       </div>
 
       <div className="mt-auto pt-3 border-t border-sidebar-border flex justify-between">
-        <UserButton showName />
+        <UserButton
+          appearance={{
+            baseTheme: theme === 'dark' ? dark : undefined,
+          }}
+          showName
+        />
         <div className="flex gap-1">
           <ThemeSwitcher />
           <LangSwitcher />

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabase, getSnapshotData } from '@/lib/supabase'
 import { auth, ClerkMiddlewareAuthObject } from '@clerk/nextjs/server'
-import { getSnapshotData } from '@/lib/ticket'
 
 async function createTicket(request: Request, user: ClerkMiddlewareAuthObject) {
   const body = await request.json()

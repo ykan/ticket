@@ -4,7 +4,9 @@ import { supabase } from '@/lib/supabase'
 
 export async function GET(request: Request) {
   try {
+    // const startTime = Date.now()
     const user = await auth()
+    // console.log('------- auth', Date.now() - startTime)
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
 
@@ -13,7 +15,7 @@ export async function GET(request: Request) {
       .from('farm')
       .select()
       .eq('workspace_id', user.orgId)
-      .limit(100)
+      .range(0, 50)
 
     if (status) {
       query = query.eq('status', status)
@@ -21,6 +23,7 @@ export async function GET(request: Request) {
 
     // 执行查询
     const { data, error } = await query
+    // console.log('------- query', Date.now() - startTime)
 
     if (error) {
       console.error('获取矿场列表失败:', error)
