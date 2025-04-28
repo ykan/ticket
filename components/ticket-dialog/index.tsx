@@ -43,7 +43,7 @@ export function TicketDialog() {
       <DialogTrigger asChild>
         <Button size="sm">创建工单</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>创建工单</DialogTitle>
         </DialogHeader>
@@ -89,7 +89,11 @@ export function TicketDialog() {
 
           <div className="space-y-2">
             <Label>描述</Label>
-            <MDEditor value={description} onChange={setDescription} />
+            <MDEditor
+              className="max-h-[500px]"
+              value={description}
+              onChange={setDescription}
+            />
           </div>
 
           <div className="flex justify-end">

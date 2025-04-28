@@ -1,6 +1,7 @@
 'use client'
+import * as React from 'react'
 import { UserButton, OrganizationSwitcher } from '@clerk/nextjs'
-import { Languages, Moon, Sun, Gauge } from 'lucide-react'
+import { Languages, Moon, Sun, Gauge, ChevronDown } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useLocale } from 'next-intl'
 import { usePathname, useRouter } from 'next/navigation'
@@ -13,9 +14,48 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import { FarmList } from '@/components/farm-list'
 import { Link } from '@/lib/navigation'
 import { cn } from '@/lib/utils'
+
+type SidebarGroupProps = {
+  title: string
+  children: React.ReactNode
+  defaultOpen?: boolean
+  className?: string
+}
+
+function SidebarGroup({
+  title,
+  children,
+  defaultOpen = true,
+  className,
+}: SidebarGroupProps) {
+  const [isOpen, setIsOpen] = React.useState(defaultOpen)
+  return (
+    <Collapsible
+      open={isOpen}
+      onOpenChange={setIsOpen}
+      className={cn('space-y-1', className)}
+    >
+      <CollapsibleTrigger className="flex items-center w-full px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+        <span className="font-medium mr-1">{title}</span>
+        <ChevronDown
+          className={cn(
+            'w-3 h-3 transition-transform duration-200',
+            isOpen ? '' : '-rotate-90'
+          )}
+        />
+      </CollapsibleTrigger>
+      <CollapsibleContent>{children}</CollapsibleContent>
+    </Collapsible>
+  )
+}
 
 function ThemeSwitcher() {
   const { theme, setTheme } = useTheme()
@@ -89,12 +129,12 @@ export function Sidebar() {
 
       {/* 工单管理 */}
       <div className="flex-1">
-        <div className="py-4">
+        <div className="pt-4 pb-1">
           <DashboardItem />
         </div>
-        <div>
+        <SidebarGroup title="工单管理">
           <FarmList />
-        </div>
+        </SidebarGroup>
       </div>
 
       <div className="mt-auto pt-3 border-t border-sidebar-border flex justify-between">
