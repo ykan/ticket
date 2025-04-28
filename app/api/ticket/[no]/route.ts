@@ -64,7 +64,7 @@ export async function PATCH(
         level: body.level,
         origin_level: body.origin_level,
         assignee_id: body.assignee_id,
-        miner_ids: body.miner_ids,
+        miners: body.miners,
         farm_id: body.farm_id,
       })
       .eq('no', no)

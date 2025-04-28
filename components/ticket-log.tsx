@@ -5,18 +5,11 @@ import { Tables, Enums } from '@/lib/supabase.types'
 import { MDViewer } from '@/components/md-viewer'
 import { TicketLevel } from '@/components/ticket-level'
 import { TicketStatus } from '@/components/ticket-status'
+import { FarmDisplay } from './farm-display'
 
-interface FarmSnapshotData {
-  farmId: number
-  status: string
-  minerCount: number
-}
-
-interface MinersSnapshotData {
-  miners: Array<{
-    id: number
-    status: string
-  }>
+interface SnapshotData {
+  farm: Tables<'farm'>
+  miners?: Tables<'miner'>[]
 }
 
 interface RemarkData {
@@ -39,19 +32,11 @@ interface StatusChangeData {
 }
 
 type LogData = {
-  FarmSnapshot: FarmSnapshotData
-  MinersSnapshot: MinersSnapshotData
+  Snapshot: SnapshotData
   Remark: RemarkData
   LevelChange: LevelChangeData
   AssigneeChange: AssigneeChangeData
   StatusChange: StatusChangeData
-}
-
-export type LogType = Tables<'operate_log'> & {
-  data: LogData[keyof LogData]
-}
-type LogProps = {
-  log?: LogType
 }
 
 function formatDate(date?: string | null) {
@@ -61,26 +46,18 @@ function formatDate(date?: string | null) {
   return dayjs(date).format('YYYY-MM-DD HH:mm:ss')
 }
 
-export function Log({ log }: LogProps) {
+export type TicketLogType = Tables<'operate_log'> & {
+  data: LogData[keyof LogData]
+}
+
+export function TicketLog({ log }: { log?: TicketLogType }) {
   const renderLog = () => {
     if (!log?.data) return null
 
     switch (log.type) {
-      case 'FarmSnapshot': {
-        const data = log.data as FarmSnapshotData
-        return (
-          <div className="text-sm text-muted-foreground">
-            矿场状态：{data.status}，矿机数量：{data.minerCount}
-          </div>
-        )
-      }
-      case 'MinersSnapshot': {
-        const data = log.data as MinersSnapshotData
-        return (
-          <div className="text-sm text-muted-foreground">
-            矿机数量：{data.miners.length}
-          </div>
-        )
+      case 'Snapshot': {
+        const data = log.data as SnapshotData
+        return <FarmDisplay farm={data.farm} miners={data.miners} />
       }
       case 'Remark': {
         const data = log.data as RemarkData

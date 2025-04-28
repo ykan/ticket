@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { request } from '@/lib/request'
 import { cn } from '@/lib/utils'
 
-export function LogSender({ className }: { className?: string }) {
+export function TicketLogSender({ className }: { className?: string }) {
   const { no } = useParams<{ no: string }>()
   const [content, setContent] = React.useState('')
   const queryClient = useQueryClient()

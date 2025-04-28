@@ -8,17 +8,28 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const farm_id = searchParams.get('farm_id')
     const status = searchParams.get('status')
+    const ids = searchParams.get('ids')
 
     // 构建查询
     let query = supabase
       .from('miner')
       .select()
       .eq('workspace_id', user.orgId)
-      .eq('farm_id', farm_id)
       .limit(100)
+
+    // 添加筛选条件
+    if (farm_id) {
+      query = query.eq('farm_id', farm_id)
+    }
 
     if (status) {
       query = query.eq('status', status)
+    }
+
+    // 如果传入了 ids 参数，添加 id 筛选
+    if (ids) {
+      const minerIds = ids.split(',').map((id) => parseInt(id))
+      query = query.in('id', minerIds)
     }
 
     // 执行查询

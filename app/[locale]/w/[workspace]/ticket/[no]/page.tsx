@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
 
 import { request } from '@/lib/request'
@@ -10,6 +10,8 @@ import { PageView, PageHead, PageBody } from '@/components/page-view'
 import { TicketLevel } from '@/components/ticket-level'
 import { TicketStatus } from '@/components/ticket-status'
 import { MDEditor } from '@/components/md-editor'
+import { TicketLog, TicketLogType } from '@/components/ticket-log'
+import { TicketLogSender } from '@/components/ticket-log-sender'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -19,15 +21,14 @@ import {
   BreadcrumbList,
 } from '@/components/ui/breadcrumb'
 import { Link } from '@/lib/navigation'
-
-import { Log, LogType } from './log'
-import { LogSender } from './log-sender'
+import { FarmDisplay } from '@/components/farm-display'
 
 export default function Ticket() {
   const { no } = useParams<{ no: string }>()
   const [isEditing, setIsEditing] = React.useState(false)
   const [description, setDescription] = React.useState('')
   const [title, setTitle] = React.useState('')
+  const queryClient = useQueryClient()
 
   const { data = {}, isLoading } = useQuery({
     queryKey: ['ticket', no],
@@ -46,10 +47,18 @@ export default function Ticket() {
       return res.data
     },
   })
+  // 获取快照数据
+  const { data: snapshotData } = useQuery({
+    queryKey: ['ticket-snapshot', no],
+    queryFn: async () => {
+      const res = await request.get(`/ticket/${no}/snapshot`)
+      return res.data
+    },
+  })
   const detail = data as Tables<'ticket'>
-  const logs = logsData as LogType[]
+  const logs = logsData as TicketLogType[]
 
-  const updateMutation = useMutation({
+  const updateTicket = useMutation({
     mutationFn: async () => {
       return request.patch(`/ticket/${no}`, {
         title,
@@ -61,12 +70,28 @@ export default function Ticket() {
     },
   })
 
+  const mutationSnapshot = useMutation({
+    mutationFn: async () => {
+      const res = await request.post(`/ticket/${no}/snapshot`)
+      return res.data
+    },
+    onSuccess: () => {
+      // 刷新工单日志列表和快照数据
+      queryClient.invalidateQueries({ queryKey: ['ticket-logs', no] })
+      queryClient.invalidateQueries({ queryKey: ['ticket-snapshot', no] })
+    },
+  })
+
+  const handleSnapshot = () => {
+    mutationSnapshot.mutate()
+  }
+
   const handleEdit = () => {
     setIsEditing(true)
   }
 
   const handleSave = () => {
-    updateMutation.mutate()
+    updateTicket.mutate()
   }
 
   const renderLogs = () => {
@@ -77,10 +102,10 @@ export default function Ticket() {
     return (
       <div className="border-t-[0.5px] py-4">
         <h2 className="text-lg font-semibold mb-4">操作日志</h2>
-        <LogSender className="mb-4" />
+        <TicketLogSender className="mb-4" />
         <div className="space-y-4">
           {logs.map((log) => (
-            <Log key={log.id} log={log} />
+            <TicketLog key={log.id} log={log} />
           ))}
         </div>
       </div>
@@ -113,9 +138,9 @@ export default function Ticket() {
             <Button
               size="sm"
               onClick={handleSave}
-              disabled={updateMutation.isPending}
+              disabled={updateTicket.isPending}
             >
-              {updateMutation.isPending ? '保存中...' : '保存'}
+              {updateTicket.isPending ? '保存中...' : '保存'}
             </Button>
           ) : (
             <Button size="sm" onClick={handleEdit}>
@@ -147,6 +172,25 @@ export default function Ticket() {
               <MDEditor value={description} onChange={setDescription} />
             ) : (
               <MDViewer content={description} />
+            )}
+          </div>
+          <div className="p-4 rounded-lg bg-muted/50 mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">相关矿机实时信息</h3>
+              <Button
+                size="sm"
+                onClick={handleSnapshot}
+                disabled={mutationSnapshot.isPending}
+              >
+                {mutationSnapshot.isPending ? '创建快照中...' : '创建快照'}
+              </Button>
+            </div>
+
+            {snapshotData && (
+              <FarmDisplay
+                farm={snapshotData.farm}
+                miners={snapshotData.miners}
+              />
             )}
           </div>
           {renderLogs()}

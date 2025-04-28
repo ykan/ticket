@@ -118,6 +118,7 @@ export type Database = {
           ticket_id: number
           type: Database['public']['Enums']['operate_log_type']
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string | null
@@ -126,6 +127,7 @@ export type Database = {
           ticket_id: number
           type: Database['public']['Enums']['operate_log_type']
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string | null
@@ -134,6 +136,7 @@ export type Database = {
           ticket_id?: number
           type?: Database['public']['Enums']['operate_log_type']
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -180,7 +183,7 @@ export type Database = {
           farm_id: number | null
           id: number
           level: Database['public']['Enums']['ticket_level']
-          miner_ids: string[]
+          miners: number[] | null
           no: number | null
           origin_level: Database['public']['Enums']['ticket_level']
           reporter_id: string | null
@@ -196,7 +199,7 @@ export type Database = {
           farm_id?: number | null
           id?: number
           level: Database['public']['Enums']['ticket_level']
-          miner_ids?: string[]
+          miners?: number[] | null
           no?: number | null
           origin_level: Database['public']['Enums']['ticket_level']
           reporter_id?: string | null
@@ -212,7 +215,7 @@ export type Database = {
           farm_id?: number | null
           id?: number
           level?: Database['public']['Enums']['ticket_level']
-          miner_ids?: string[]
+          miners?: number[] | null
           no?: number | null
           origin_level?: Database['public']['Enums']['ticket_level']
           reporter_id?: string | null
@@ -248,6 +251,7 @@ export type Database = {
         | 'LevelChange'
         | 'AssigneeChange'
         | 'StatusChange'
+        | 'Snapshot'
       ticket_level: 'P0' | 'P1' | 'P2' | 'P3' | 'P4'
       ticket_status: 'Todo' | 'Doing' | 'Canceled' | 'Done'
     }
@@ -374,6 +378,7 @@ export const Constants = {
         'LevelChange',
         'AssigneeChange',
         'StatusChange',
+        'Snapshot',
       ],
       ticket_level: ['P0', 'P1', 'P2', 'P3', 'P4'],
       ticket_status: ['Todo', 'Doing', 'Canceled', 'Done'],

@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { request } from '@/lib/request'
 
 import {
@@ -12,15 +12,26 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { MDEditor } from '@/components/md-editor'
+import { TicketLevel } from '@/components/ticket-level'
+import { Enums } from '@/lib/supabase.types'
+
+function LevelItem({ level }: { level: Enums<'ticket_level'> }) {
+  return (
+    <div className="flex items-center space-x-2">
+      <RadioGroupItem value={level} id={level} />
+      <TicketLevel level={level} />
+    </div>
+  )
+}
 
 export function TicketDialog() {
   const [open, setOpen] = React.useState(false)
   const [title, setTitle] = React.useState('')
   const [level, setLevel] = React.useState('P2')
   const [description, setDescription] = React.useState('')
+  const queryClient = useQueryClient()
 
   const createMutation = useMutation({
     mutationFn: async () => {
@@ -35,6 +46,7 @@ export function TicketDialog() {
       setTitle('')
       setLevel('P2')
       setDescription('')
+      queryClient.invalidateQueries({ queryKey: ['tickets'] })
     },
   })
 
@@ -47,9 +59,8 @@ export function TicketDialog() {
         <DialogHeader>
           <DialogTitle>创建工单</DialogTitle>
         </DialogHeader>
-        <div className="space-y-6 py-4">
+        <div className="space-y-4">
           <div className="space-y-2">
-            <Label>标题</Label>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -58,37 +69,20 @@ export function TicketDialog() {
           </div>
 
           <div className="space-y-2">
-            <Label>优先级</Label>
             <RadioGroup
               value={level}
               onValueChange={setLevel}
               className="flex gap-4"
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="P0" id="p0" />
-                <Label htmlFor="p0">P0</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="P1" id="p1" />
-                <Label htmlFor="p1">P1</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="P2" id="p2" />
-                <Label htmlFor="p2">P2</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="P3" id="p3" />
-                <Label htmlFor="p3">P3</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="P4" id="p4" />
-                <Label htmlFor="p4">P4</Label>
-              </div>
+              <LevelItem level="P0" />
+              <LevelItem level="P1" />
+              <LevelItem level="P2" />
+              <LevelItem level="P3" />
+              <LevelItem level="P4" />
             </RadioGroup>
           </div>
 
           <div className="space-y-2">
-            <Label>描述</Label>
             <MDEditor
               className="max-h-[500px]"
               value={description}

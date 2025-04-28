@@ -40,8 +40,8 @@ async function createTicket(request: Request, user: ClerkMiddlewareAuthObject) {
       status: 'Todo',
       origin_level: body.level || body.origin_level,
       level: body.level,
-      miner_ids: body.minerIds || [],
-      farm_id: body.farmId,
+      miners: body.miners || [],
+      farm_id: body.farm_id,
     })
     .select()
     .single()

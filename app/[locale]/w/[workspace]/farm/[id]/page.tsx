@@ -8,16 +8,22 @@ import { Button } from '@/components/ui/button'
 import { request } from '@/lib/request'
 import { PageView, PageHead, PageBody } from '@/components/page-view'
 import { Tables } from '@/lib/supabase.types'
-import { cn } from '@/lib/utils'
+import { FarmDisplay } from '@/components/farm-display'
 
 export default function Farm() {
   const t = useTranslations('farm.list')
   const { id } = useParams<{ id: string }>()
-  const { data: miners = [], isLoading } = useQuery({
-    queryKey: ['miners', id],
+  const { data, isLoading } = useQuery({
+    queryKey: ['farm', id],
     queryFn: async () => {
-      const res = await request.get(`/miners?farm_id=${id}`)
-      return res.data as Tables<'miner'>[]
+      const [res1, res2] = await Promise.all([
+        request.get(`/miners?farm_id=${id}`),
+        request.get(`/farm/${id}`),
+      ])
+      return {
+        miners: res1.data as Tables<'miner'>[],
+        farm: res2.data as Tables<'farm'>,
+      }
     },
   })
 
@@ -52,37 +58,13 @@ export default function Farm() {
         </div>
       </PageHead>
       <PageBody>
-        <div className="divide-y">
-          {miners.map((miner) => (
-            <div
-              key={miner.id}
-              className={cn(
-                'py-3 px-4 hover:bg-muted/50 transition-colors',
-                'flex items-center gap-4'
-              )}
-            >
-              <div className="w-32 truncate">{miner.hostname}</div>
-              <div className="w-32">{miner.ip_address}</div>
-              <div className="w-24">{miner.model}</div>
-              <div
-                className={cn(
-                  'w-20',
-                  miner.status === 'Online' && 'text-green-500',
-                  miner.status === 'Offline' && 'text-gray-500',
-                  miner.status === 'Error' && 'text-red-500'
-                )}
-              >
-                {miner.status}
-              </div>
-              <div className="flex-1 min-w-0 text-sm text-muted-foreground">
-                {miner.notes}
-              </div>
-              <div className="w-32 text-sm text-muted-foreground">
-                {miner.location}
-              </div>
-            </div>
-          ))}
-        </div>
+        {data?.farm ? (
+          <FarmDisplay
+            className="p-10"
+            farm={data?.farm}
+            miners={data?.miners}
+          />
+        ) : null}
       </PageBody>
     </PageView>
   )
