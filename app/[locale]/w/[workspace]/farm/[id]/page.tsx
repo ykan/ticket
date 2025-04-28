@@ -10,6 +10,7 @@ import { PageView, PageHead, PageBody } from '@/components/page-view'
 import { Tables } from '@/lib/supabase.types'
 import { FarmDisplay } from '@/components/farm-display'
 
+let i = 9
 export default function Farm() {
   const t = useTranslations('farm.list')
   const { id } = useParams<{ id: string }>()
@@ -30,14 +31,14 @@ export default function Farm() {
   const handleCreate = () => {
     request.post('/miner', {
       farm_id: id,
-      ip_address: '192.168.3.101',
+      ip_address: `192.168.${i}.101`,
       mac_address: '00:1B:44:11:3A:D1',
-      hostname: 'MINER-NMG-003',
-      model: 'Avalon 1366',
+      hostname: `MINER-NMG-${i++}`,
+      model: 'Avalon 122',
       manufacturer: 'Canaan',
       serial_number: 'CAN202306001',
       status: 'Online',
-      is_mining: false,
+      is_mining: true,
       last_seen: new Date('2024-11-29T08:15:00'),
       firmware: {
         version: '1.1.0',

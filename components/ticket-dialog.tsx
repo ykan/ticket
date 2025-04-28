@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { MDEditor } from '@/components/md-editor'
 import { TicketLevel } from '@/components/ticket-level'
+import { FarmMinerStatus } from '@/components/farm-miner-status'
 import { Enums, Tables } from '@/lib/supabase.types'
 import {
   Command,
@@ -152,7 +153,10 @@ export function TicketDialog() {
                               farmId === farm.id ? 'opacity-100' : 'opacity-0'
                             )}
                           />
-                          {farm.name}
+                          <span className="inline-flex items-center">
+                            <FarmMinerStatus status={farm.status} />
+                            <span className="ml-2">{farm.name}</span>
+                          </span>
                         </CommandItem>
                       ))}
                     </CommandGroup>
@@ -202,7 +206,17 @@ export function TicketDialog() {
                                 : 'opacity-0'
                             )}
                           />
-                          {miner.hostname}
+                          <div className="flex">
+                            <div>
+                              <FarmMinerStatus status={miner.status} />
+                            </div>
+                            <div className="flex flex-col ml-2">
+                              <span>{miner.hostname}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {miner.ip_address}
+                              </span>
+                            </div>
+                          </div>
                         </CommandItem>
                       ))}
                     </CommandGroup>
