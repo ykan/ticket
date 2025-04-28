@@ -1,7 +1,8 @@
 'use client'
 import * as React from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 import { request } from '@/lib/request'
+import { Check, ChevronsUpDown } from 'lucide-react'
 
 import {
   Dialog,
@@ -15,7 +16,20 @@ import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { MDEditor } from '@/components/md-editor'
 import { TicketLevel } from '@/components/ticket-level'
-import { Enums } from '@/lib/supabase.types'
+import { Enums, Tables } from '@/lib/supabase.types'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from '@/components/ui/command'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
 
 function LevelItem({ level }: { level: Enums<'ticket_level'> }) {
   return (
@@ -31,7 +45,31 @@ export function TicketDialog() {
   const [title, setTitle] = React.useState('')
   const [level, setLevel] = React.useState('P2')
   const [description, setDescription] = React.useState('')
+  const [farmId, setFarmId] = React.useState<number>()
+  const [minerIds, setMinerIds] = React.useState<number[]>([])
+  const [farmOpen, setFarmOpen] = React.useState(false)
+  const [minersOpen, setMinersOpen] = React.useState(false)
   const queryClient = useQueryClient()
+
+  // 获取矿场列表
+  const { data: farms = [] } = useQuery<Tables<'farm'>[]>({
+    queryKey: ['farms'],
+    queryFn: async () => {
+      const res = await request.get('/farms')
+      return res.data
+    },
+  })
+
+  // 获取矿机列表
+  const { data: miners = [] } = useQuery<Tables<'miner'>[]>({
+    queryKey: ['miners', farmId],
+    queryFn: async () => {
+      if (!farmId) return []
+      const res = await request.get(`/miners?farm_id=${farmId}`)
+      return res.data
+    },
+    enabled: !!farmId,
+  })
 
   const createMutation = useMutation({
     mutationFn: async () => {
@@ -39,6 +77,8 @@ export function TicketDialog() {
         title,
         level,
         description,
+        farm_id: farmId,
+        miners: minerIds,
       })
     },
     onSuccess: () => {
@@ -46,9 +86,19 @@ export function TicketDialog() {
       setTitle('')
       setLevel('P2')
       setDescription('')
+      setFarmId(undefined)
+      setMinerIds([])
       queryClient.invalidateQueries({ queryKey: ['tickets'] })
     },
   })
+
+  const selectedFarm = React.useMemo(() => {
+    return farms.find((farm) => farm.id === farmId)
+  }, [farms, farmId])
+
+  const selectedMiners = React.useMemo(() => {
+    return miners.filter((miner) => minerIds.includes(miner.id))
+  }, [miners, minerIds])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -68,7 +118,98 @@ export function TicketDialog() {
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="flex items-center gap-4">
+            <div className="flex gap-2">
+              <Popover open={farmOpen} onOpenChange={setFarmOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={farmOpen}
+                    className="w-full justify-between"
+                  >
+                    {selectedFarm?.name || '选择矿场'}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandInput placeholder="搜索矿场..." />
+                    <CommandEmpty>未找到矿场</CommandEmpty>
+                    <CommandGroup>
+                      {farms.map((farm) => (
+                        <CommandItem
+                          key={farm.id}
+                          onSelect={() => {
+                            setFarmId(farm.id)
+                            setMinerIds([])
+                            setFarmOpen(false)
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              'mr-2 h-4 w-4',
+                              farmId === farm.id ? 'opacity-100' : 'opacity-0'
+                            )}
+                          />
+                          {farm.name}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <div>
+              <Popover open={minersOpen} onOpenChange={setMinersOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={minersOpen}
+                    className="w-full justify-between"
+                    disabled={!farmId}
+                  >
+                    {selectedMiners.length
+                      ? `已选择 ${selectedMiners.length} 台矿机`
+                      : '选择矿机'}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandInput placeholder="搜索矿机..." />
+                    <CommandEmpty>未找到矿机</CommandEmpty>
+                    <CommandGroup>
+                      {miners.map((miner) => (
+                        <CommandItem
+                          key={miner.id}
+                          onSelect={() => {
+                            setMinerIds((prev) => {
+                              if (prev.includes(miner.id)) {
+                                return prev.filter((id) => id !== miner.id)
+                              }
+                              return [...prev, miner.id]
+                            })
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              'mr-2 h-4 w-4',
+                              minerIds.includes(miner.id)
+                                ? 'opacity-100'
+                                : 'opacity-0'
+                            )}
+                          />
+                          {miner.hostname}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
             <RadioGroup
               value={level}
               onValueChange={setLevel}
@@ -93,7 +234,13 @@ export function TicketDialog() {
           <div className="flex justify-end">
             <Button
               onClick={() => createMutation.mutate()}
-              disabled={createMutation.isPending || !title || !level}
+              disabled={
+                createMutation.isPending ||
+                !title ||
+                !level ||
+                !farmId ||
+                !minerIds.length
+              }
             >
               {createMutation.isPending ? '创建中...' : '创建'}
             </Button>

@@ -14,6 +14,7 @@ export async function GET(request: Request) {
       .from('ticket')
       .select()
       .eq('workspace_id', user.orgId)
+      .order('created_at', { ascending: false })
       .limit(100)
 
     // 添加筛选条件

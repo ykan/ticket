@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { auth, ClerkMiddlewareAuthObject } from '@clerk/nextjs/server'
+import { getSnapshotData } from '@/lib/ticket'
 
 async function createTicket(request: Request, user: ClerkMiddlewareAuthObject) {
   const body = await request.json()
@@ -29,7 +30,7 @@ async function createTicket(request: Request, user: ClerkMiddlewareAuthObject) {
   }
 
   // 创建工单
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('ticket')
     .insert({
       workspace_id: user.orgId,
@@ -47,6 +48,18 @@ async function createTicket(request: Request, user: ClerkMiddlewareAuthObject) {
     .single()
   if (error) {
     throw error
+  }
+  if (data.farm_id) {
+    const { farm, miners } = await getSnapshotData(data.no, user.orgId!)
+    await supabase.from('operate_log').insert({
+      ticket_id: data.id,
+      type: 'Snapshot',
+      user_id: user.userId,
+      data: {
+        farm,
+        miners,
+      },
+    })
   }
 }
 
