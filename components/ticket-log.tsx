@@ -5,7 +5,8 @@ import { Tables, Enums } from '@/lib/supabase.types'
 import { MDViewer } from '@/components/md-viewer'
 import { TicketLevel } from '@/components/ticket-level'
 import { TicketStatus } from '@/components/ticket-status'
-import { FarmDisplay } from './farm-display'
+import { UserAvatar } from '@/components/user-avatar'
+import { FarmDisplay } from '@/components/farm-display'
 
 interface SnapshotData {
   farm: Tables<'farm'>
@@ -22,8 +23,8 @@ interface LevelChangeData {
 }
 
 interface AssigneeChangeData {
-  from: string | null
-  to: string | null
+  from: string
+  to: string
 }
 
 interface StatusChangeData {
@@ -58,6 +59,17 @@ export function TicketLog({ log }: { log?: TicketLogType }) {
       case 'Snapshot': {
         const data = log.data as SnapshotData
         return <FarmDisplay farm={data.farm} miners={data.miners} />
+      }
+      case 'AssigneeChange': {
+        const data = log.data as AssigneeChangeData
+        return (
+          <div className="flex gap-1">
+            <span>处理人由</span>
+            <UserAvatar className="inline-flex w-6 h-6" userId={data.from} />
+            <span>变更为</span>
+            <UserAvatar className="inline-flex w-6 h-6" userId={data.to} />
+          </div>
+        )
       }
       case 'Remark': {
         const data = log.data as RemarkData
