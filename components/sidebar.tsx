@@ -120,7 +120,7 @@ function DashboardItem() {
 export function Sidebar() {
   const { theme } = useTheme()
   return (
-    <aside className="p-4 flex flex-col">
+    <aside className="p-2 flex flex-col">
       {/* workspace */}
       <div className="h-8">
         <OrganizationSwitcher

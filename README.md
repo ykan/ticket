@@ -37,3 +37,7 @@
 - 部署：[Vercel](https://vercel.com/)
 - 用户&权限：[Clerk](https://dashboard.clerk.com/)
 - 数据库：[Supabase](https://supabase.com/)
+- UI
+  - [Tailwind CSS](https://tailwindcss.com/docs/styling-with-utility-classes)
+  - [shadcn/ui](https://ui.shadcn.com/docs/components/accordion)
+  - Icon: [lucide](https://lucide.dev/icons/gauge?search=tran)
