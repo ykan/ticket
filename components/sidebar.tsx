@@ -122,7 +122,7 @@ export function Sidebar() {
   return (
     <aside className="p-2 flex flex-col">
       {/* workspace */}
-      <div className="h-8 pt-1">
+      <div className="h-10 pt-3">
         <OrganizationSwitcher
           afterCreateOrganizationUrl="/"
           afterSelectOrganizationUrl="/"
@@ -134,7 +134,7 @@ export function Sidebar() {
 
       {/* 工单管理 */}
       <div className="flex-1">
-        <div className="pt-4 pb-1">
+        <div className="pt-3 pb-1">
           <DashboardItem />
         </div>
         <SidebarGroup title="工单管理">
