@@ -119,6 +119,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-size: 14px;
   }
   /* tailwind v4 去掉的，参考：https://github.com/shadcn-ui/ui/issues/6843 */
   /* 这里加回去先 */

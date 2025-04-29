@@ -8,6 +8,8 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const level = searchParams.get('level')
     const status = searchParams.get('status')
+    const offset = Number(searchParams.get('offset') || 0)
+    const count = Number(searchParams.get('count') || 20)
 
     // 构建查询
     let query = supabase
@@ -15,7 +17,7 @@ export async function GET(request: Request) {
       .select()
       .eq('workspace_id', user.orgId)
       .order('created_at', { ascending: false })
-      .limit(100)
+      .range(offset, offset + count - 1)
 
     // 添加筛选条件
     if (level) {

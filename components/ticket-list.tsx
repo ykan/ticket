@@ -7,9 +7,10 @@ import { useRootPath } from '@/lib/navigation'
 
 type TicketListProps = {
   tickets: Tables<'ticket'>[]
+  className?: string
 }
 
-export function TicketList({ tickets }: TicketListProps) {
+export function TicketList({ tickets, className }: TicketListProps) {
   const router = useRouter()
   const rootPath = useRootPath()
 
@@ -18,12 +19,12 @@ export function TicketList({ tickets }: TicketListProps) {
   }
 
   return (
-    <div className="divide-y">
+    <div className={className}>
       {tickets.map((ticket) => (
         <div
           key={ticket.id}
           className={cn(
-            'py-3 px-4 hover:bg-muted/50 cursor-pointer transition-colors',
+            'py-2 px-10 hover:bg-muted/50 cursor-pointer transition-colors',
             'flex items-center'
           )}
           onClick={() => handleTicketClick(ticket)}
