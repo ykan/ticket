@@ -10,7 +10,7 @@ export function PageHead({ children, className }: PageProps) {
   return (
     <div
       className={cn(
-        'border-b-[0.5px] h-12 flex px-2 items-center bg-background',
+        'border-b-[0.5px] h-12 flex px-4 items-center bg-background',
         className
       )}
     >

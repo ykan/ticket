@@ -122,7 +122,7 @@ export function Sidebar() {
   return (
     <aside className="p-2 flex flex-col">
       {/* workspace */}
-      <div className="h-8">
+      <div className="h-8 pt-1">
         <OrganizationSwitcher
           afterCreateOrganizationUrl="/"
           afterSelectOrganizationUrl="/"
