@@ -1,3 +1,4 @@
+import { auth } from '@clerk/nextjs/server'
 import { createClient } from '@supabase/supabase-js'
 
 const { SUPABASE_URL = '', SUPABASE_ANON_KEY = '' } = process.env
@@ -55,4 +56,40 @@ export async function getSnapshotData(ticketNo: string, orgId: string) {
     farm,
     miners,
   }
+}
+
+export async function getFarm(id: string) {
+  const user = await auth()
+  const { data, error } = await supabase
+    .from('farm')
+    .select()
+    .eq('id', id)
+    .eq('workspace_id', user.orgId)
+    .single()
+  if (error) {
+    throw new Error('获取矿场信息失败')
+  }
+  return data
+}
+
+export async function getMiners(farmId: string) {
+  const user = await auth()
+  // 构建查询
+  let query = supabase
+    .from('miner')
+    .select()
+    .eq('workspace_id', user.orgId)
+    .limit(100)
+
+  // 添加筛选条件
+  if (farmId) {
+    query = query.eq('farm_id', farmId)
+  }
+
+  // 执行查询
+  const { data, error } = await query
+  if (error) {
+    throw new Error('获取矿机列表失败')
+  }
+  return data
 }

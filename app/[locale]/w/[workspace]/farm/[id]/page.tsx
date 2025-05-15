@@ -1,70 +1,39 @@
-'use client'
+import { createTranslator } from 'next-intl'
 
-import { useTranslations } from 'next-intl'
-import { useQuery } from '@tanstack/react-query'
-import { useParams } from 'next/navigation'
-
-import { Button } from '@/components/ui/button'
-import { request } from '@/lib/request'
 import { PageView, PageHead, PageBody } from '@/components/page-view'
-import { Tables } from '@/lib/supabase.types'
+import { getFarm, getMiners } from '@/lib/supabase'
 import { FarmDisplay } from '@/components/farm-display'
+import { CreateButton } from './create-button'
 
-let i = 9
-export default function Farm() {
-  const t = useTranslations('farm.list')
-  const { id } = useParams<{ id: string }>()
-  const { data, isLoading } = useQuery({
-    queryKey: ['farm', id],
-    queryFn: async () => {
-      const [res1, res2] = await Promise.all([
-        request.get(`/miners?farm_id=${id}`),
-        request.get(`/farm/${id}`),
-      ])
-      return {
-        miners: res1.data as Tables<'miner'>[],
-        farm: res2.data as Tables<'farm'>,
-      }
-    },
+type RouteParams = {
+  id: string
+  locale: string
+}
+export default async function Farm({
+  params,
+}: {
+  params: Promise<RouteParams>
+}) {
+  const { id, locale } = await params
+  const messages = (await import(`@/messages/${locale}.json`)).default
+  const t = createTranslator({
+    locale: locale,
+    messages,
+    namespace: 'farm.list',
   })
+  const [farm, miners] = await Promise.all([getFarm(id), getMiners(id)])
 
-  const handleCreate = () => {
-    request.post('/miner', {
-      farm_id: id,
-      ip_address: `192.168.${i}.101`,
-      mac_address: '00:1B:44:11:3A:D1',
-      hostname: `MINER-NMG-${i++}`,
-      model: 'Avalon 122',
-      manufacturer: 'Canaan',
-      serial_number: 'CAN202306001',
-      status: 'Online',
-      is_mining: true,
-      last_seen: new Date('2024-11-29T08:15:00'),
-      firmware: {
-        version: '1.1.0',
-        type: 'official',
-      },
-      location: 'Rack-C01-01',
-      notes: '运行正常',
-    })
-  }
   return (
-    <PageView loading={isLoading}>
+    <PageView>
       <PageHead>
         <div className="text-lg font-semibold flex-1">{t('title')}</div>
         <div>
-          <Button size="sm" onClick={handleCreate}>
-            创建矿机
-          </Button>
+          <CreateButton farmId={id} />
         </div>
       </PageHead>
       <PageBody>
-        {data?.farm ? (
-          <FarmDisplay
-            className="p-10"
-            farm={data?.farm}
-            miners={data?.miners}
-          />
+        {farm ? (
+          <FarmDisplay className="p-10" farm={farm} miners={miners} />
         ) : null}
       </PageBody>
     </PageView>
